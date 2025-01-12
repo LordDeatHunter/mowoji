@@ -22,5 +22,5 @@ func main() {
 		return c.Status(200).JSON(json)
 	})
 
-	app.Listen(":3000")
+	app.Listen(":6969")
 }
