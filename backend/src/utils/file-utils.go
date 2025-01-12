@@ -2,6 +2,7 @@ package utils
 
 import (
 	"archive/zip"
+	"bytes"
 	"io"
 	"os"
 )
@@ -21,31 +22,26 @@ func GetFiles(path string) ([]string, error) {
 	return fileNames, nil
 }
 
-func ZipFiles(files []string, zipName string) error {
-	newZipFile, err := os.Create(zipName)
-	if err != nil {
-		return err
-	}
-	defer newZipFile.Close()
-
-	zipWriter := zip.NewWriter(newZipFile)
+func ZipFiles(files []string, zipName string) (*bytes.Buffer, error) {
+	buf := new(bytes.Buffer)
+	zipWriter := zip.NewWriter(buf)
 	defer zipWriter.Close()
 
 	for _, file := range files {
 		fileToZip, err := os.Open("emojis/" + file)
 		if err != nil {
-			return err
+			return nil, err
 		}
 		defer fileToZip.Close()
 
 		info, err := fileToZip.Stat()
 		if err != nil {
-			return err
+			return nil, err
 		}
 
 		header, err := zip.FileInfoHeader(info)
 		if err != nil {
-			return err
+			return nil, err
 		}
 
 		header.Name = file
@@ -53,14 +49,14 @@ func ZipFiles(files []string, zipName string) error {
 
 		writer, err := zipWriter.CreateHeader(header)
 		if err != nil {
-			return err
+			return nil, err
 		}
 
 		_, err = io.Copy(writer, fileToZip)
 		if err != nil {
-			return err
+			return nil, err
 		}
 	}
 
-	return nil
+	return buf, nil
 }

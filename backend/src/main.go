@@ -29,13 +29,16 @@ func main() {
 			return c.Status(500).SendString(err.Error())
 		}
 
-		err = utils.ZipFiles(files, "emojis.zip")
+		zipBuffer, err := utils.ZipFiles(files, "emojis.zip")
 
 		if err != nil {
 			return c.Status(500).SendString(err.Error())
 		}
 
-		return c.SendFile("emojis.zip")
+		c.Set("Content-Type", "application/zip")
+		c.Set("Content-Disposition", "attachment; filename=emojis.zip")
+
+		return c.Status(200).Send(zipBuffer.Bytes())
 	})
 
 	app.Listen(":6969")
