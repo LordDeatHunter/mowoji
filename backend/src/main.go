@@ -15,10 +15,7 @@ func main() {
 			return c.Status(500).SendString(err.Error())
 		}
 
-		var fileString = ""
-		for _, file := range files {
-			fileString += file + "\n"
-		}
+		fileString, err := utils.ConvertToJSON(files)
 
 		return c.SendString(fileString)
 	})
