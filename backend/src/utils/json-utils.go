@@ -1,13 +1,12 @@
 package utils
 
 import (
-	"encoding/json"
 	"strings"
 )
 
 const ImageUrl = "https://emojis.deathunter.com/"
 
-func ConvertToJSON(data []string) (string, error) {
+func ConvertToJSON(data []string) map[string]string {
 	emojis := make(map[string]string)
 
 	for _, file := range data {
@@ -15,10 +14,5 @@ func ConvertToJSON(data []string) (string, error) {
 		emojis[filename] = ImageUrl + file
 	}
 
-	jsonData, err := json.Marshal(emojis)
-	if err != nil {
-		return "", err
-	}
-
-	return string(jsonData), nil
+	return emojis
 }

@@ -15,9 +15,11 @@ func main() {
 			return c.Status(500).SendString(err.Error())
 		}
 
-		fileString, err := utils.ConvertToJSON(files)
+		json := utils.ConvertToJSON(files)
 
-		return c.SendString(fileString)
+		c.Set("Content-Type", "application/json")
+
+		return c.Status(200).JSON(json)
 	})
 
 	app.Listen(":3000")
