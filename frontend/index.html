@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Emoji Viewer</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 1rem;
+    }
+    .emoji-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .emoji-grid .emoji {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-size: 0.8rem;
+      width: 80px;
+    }
+    .emoji-grid img {
+      width: 64px;
+      height: 64px;
+      object-fit: contain;
+    }
+  </style>
+</head>
+<body>
+  <h1>Emoji Viewer</h1>
+  <div id="emojiGrid" class="emoji-grid"></div>
+
+  <script>
+    fetch('https://emojis.deathunter.com/api/emojis')
+      .then(response => response.json())
+      .then(emojis => {
+        const container = document.getElementById('emojiGrid');
+        Object.entries(emojis).forEach(([name, url]) => {
+          const wrapper = document.createElement('div');
+          wrapper.className = 'emoji';
+
+          const img = document.createElement('img');
+          img.src = url;
+          img.alt = name;
+
+          const label = document.createElement('div');
+          label.textContent = name;
+
+          wrapper.appendChild(img);
+          wrapper.appendChild(label);
+          container.appendChild(wrapper);
+        });
+      })
+      .catch(error => {
+        console.error('Error loading emojis:', error);
+      });
+  </script>
+</body>
+</html>
