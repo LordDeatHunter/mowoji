@@ -19,6 +19,11 @@
       align-items: center;
       font-size: 0.8rem;
       width: 80px;
+      transition: all ease-in-out 100ms;
+      cursor: pointer;
+    }
+    .emoji-grid .emoji:hover {
+        transform: scale(1.2);
     }
     .emoji-grid img {
       width: 64px;
@@ -32,7 +37,7 @@
   <div id="emojiGrid" class="emoji-grid"></div>
 
   <script>
-    fetch('https://emojis.deathunter.com/api/emojis')
+    fetch('/api/emojis')
       .then(response => response.json())
       .then(emojis => {
         const container = document.getElementById('emojiGrid');
@@ -49,12 +54,34 @@
 
           wrapper.appendChild(img);
           wrapper.appendChild(label);
+
+          const filename = url.split('/').at(-1);
+          wrapper.addEventListener('click', () => {
+            downloadImage(url, filename);
+          });
           container.appendChild(wrapper);
         });
       })
       .catch(error => {
         console.error('Error loading emojis:', error);
       });
+
+
+    function downloadImage(url, filename) {
+      fetch(url)
+        .then(response => response.blob())
+        .then(blob => {
+          const blobUrl = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = blobUrl;
+          a.download = filename;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          URL.revokeObjectURL(blobUrl);
+        })
+      .catch(err => console.error('Download failed:', err));
+    }
   </script>
 </body>
 </html>
