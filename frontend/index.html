@@ -1,87 +1,109 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>Emoji Viewer</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      padding: 1rem;
-    }
-    .emoji-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-    .emoji-grid .emoji {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      font-size: 0.8rem;
-      width: 80px;
-      transition: all ease-in-out 100ms;
-      cursor: pointer;
-    }
-    .emoji-grid .emoji:hover {
+  <head>
+    <meta charset="UTF-8" />
+    <title>Emoji Viewer</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        padding: 1rem;
+      }
+
+      #search {
+        margin-bottom: 1rem;
+        padding: 0.5rem;
+        width: 100%;
+        max-width: 460px;
+        box-sizing: border-box;
+        font-size: 1rem;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+      }
+
+      .emoji-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .emoji {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        font-size: 0.8rem;
+        width: 80px;
+        transition: all ease-in-out 200ms;
+        cursor: pointer;
+      }
+
+      .emoji:hover {
         transform: scale(1.2);
-    }
-    .emoji-grid img {
-      width: 64px;
-      height: 64px;
-      object-fit: contain;
-    }
-  </style>
-</head>
-<body>
-  <h1>Emoji Viewer</h1>
-  <div id="emojiGrid" class="emoji-grid"></div>
+      }
 
-  <script>
-    fetch('/api/emojis')
-      .then(response => response.json())
-      .then(emojis => {
-        const container = document.getElementById('emojiGrid');
-        Object.entries(emojis).forEach(([name, url]) => {
-          const wrapper = document.createElement('div');
-          wrapper.className = 'emoji';
+      .emoji img {
+        width: 64px;
+        height: 64px;
+        object-fit: contain;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Emoji Viewer</h1>
+    <input id="search" placeholder="Search emojis..." />
 
-          const img = document.createElement('img');
-          img.src = url;
-          img.alt = name;
+    <div id="emojiGrid" class="emoji-grid"></div>
 
-          const label = document.createElement('div');
-          label.textContent = name;
+    <script>
+      const container = document.getElementById("emojiGrid");
+      const searchInput = document.getElementById("search");
 
-          wrapper.appendChild(img);
-          wrapper.appendChild(label);
+      fetch("/api/emojis")
+        .then((response) => response.json())
+        .then((emojis) => {
+          Object.entries(emojis).forEach(([name, url]) => {
+            const wrapper = document.createElement("div");
+            wrapper.className = "emoji";
+            wrapper.dataset.name = name.toLowerCase();
 
-          const filename = url.split('/').at(-1);
-          wrapper.addEventListener('click', () => {
-            downloadImage(url, filename);
+            const img = document.createElement("img");
+            img.src = url;
+            img.alt = name;
+
+            const label = document.createElement("div");
+            label.textContent = name;
+
+            wrapper.append(img, label);
+            const filename = url.split("/").at(-1);
+            wrapper.addEventListener("click", () => {
+              downloadImage(url, filename);
+            });
+            container.append(wrapper);
           });
-          container.appendChild(wrapper);
+        })
+        .catch((error) => console.error("Error loading emojis:", error));
+
+      searchInput.addEventListener("input", (e) => {
+        const term = e.target.value.trim().toLowerCase();
+        container.querySelectorAll(".emoji").forEach((el) => {
+          el.style.display = el.dataset.name.includes(term) ? "flex" : "none";
         });
-      })
-      .catch(error => {
-        console.error('Error loading emojis:', error);
       });
 
-
-    function downloadImage(url, filename) {
-      fetch(url)
-        .then(response => response.blob())
-        .then(blob => {
-          const blobUrl = URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = blobUrl;
-          a.download = filename;
-          document.body.appendChild(a);
-          a.click();
-          a.remove();
-          URL.revokeObjectURL(blobUrl);
-        })
-      .catch(err => console.error('Download failed:', err));
-    }
-  </script>
-</body>
+      const downloadImage = (url, filename) => {
+        fetch(url)
+          .then((response) => response.blob())
+          .then((blob) => {
+            const blobUrl = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = blobUrl;
+            a.download = filename;
+            document.body.append(a);
+            a.click();
+            a.remove();
+            URL.revokeObjectURL(blobUrl);
+          })
+          .catch((err) => console.error("Download failed:", err));
+      };
+    </script>
+  </body>
 </html>
