@@ -1,6 +1,16 @@
+@import url("https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&display=swap");
+@import "tailwindcss";
+
 body {
-  font-family: sans-serif;
+  font-family: "Oswald", sans-serif;
   padding: 1rem;
+}
+
+h1 {
+  font-family: "Oswald", sans-serif;
+  font-size: 2.25rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
 }
 
 .controls {
@@ -54,7 +64,9 @@ body {
   font-size: 0.8rem;
   cursor: pointer;
   user-select: none;
-  transition: background 150ms, border-color 150ms;
+  transition:
+    background 150ms,
+    border-color 150ms;
 }
 
 .tag-switch:hover {
