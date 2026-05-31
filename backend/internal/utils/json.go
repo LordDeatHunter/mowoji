@@ -10,9 +10,9 @@ import (
 const ImageUrl = "https://emojis.deathunter.com/"
 
 type Emoji struct {
-	URL  string   `yaml:"url"`
-	Tags []string `yaml:"tags"`
-	NSFW bool     `yaml:"nsfw"`
+	URL  string   `yaml:"url" json:"url"`
+	Tags []string `yaml:"tags" json:"tags"`
+	NSFW bool     `yaml:"nsfw" json:"nsfw"`
 }
 
 type Metadata struct {
