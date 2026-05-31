@@ -2,6 +2,7 @@ const container = document.getElementById("emojiGrid");
 const searchInput = document.getElementById("search");
 const nsfwToggle = document.getElementById("nsfwToggle");
 const tagFiltersContainer = document.getElementById("tagFilters");
+const emojiCount = document.getElementById("emojiCount");
 
 let allEmojis = [];
 let activeTags = new Set();
@@ -44,6 +45,7 @@ const createTagToggle = (tag) => {
 const renderEmojis = () => {
   const term = searchInput.value.trim().toLowerCase();
   const showNsfw = nsfwToggle.checked;
+  const hasActiveFilters = term.length > 0 || showNsfw || activeTags.size > 0;
 
   container.innerHTML = "";
 
@@ -53,6 +55,9 @@ const renderEmojis = () => {
     const searchable = [emoji.name, ...(emoji.tags ?? [])].join(" ").toLowerCase();
     return searchable.includes(term);
   });
+
+  const emojiCountText = hasActiveFilters ? `${filteredEmojis.length} / ${allEmojis.length}` : `${allEmojis.length}`;
+  emojiCount.textContent = `Showing ${emojiCountText} emojis`;
 
   if (filteredEmojis.length === 0) {
     const emptyMessage = document.createElement("div");
