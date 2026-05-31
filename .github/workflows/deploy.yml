@@ -19,6 +19,7 @@ jobs:
       - name: connect and deploy
         run: |
           ssh "${{ secrets.USERNAME }}@${{ secrets.HOST }}" "
+            export PATH=${{ secrets.BUN_PATH }}:\$PATH
             cd ${{ secrets.SITE_PATH }} &&
             git switch -f master &&
             git pull &&
