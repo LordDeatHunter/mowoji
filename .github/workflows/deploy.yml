@@ -22,7 +22,11 @@ jobs:
             cd ${{ secrets.SITE_PATH }} &&
             git switch -f master &&
             git pull &&
-            docker compose -p mowoji -f docker-compose.yml up -d --build
+            docker compose -p mowoji -f docker-compose.yml up -d --build &&
+            cd frontend &&
+            rm -rf node_modules &&
+            bun i &&
+            bun run build
           "
 
       - name: cleanup
