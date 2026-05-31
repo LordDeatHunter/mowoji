@@ -45,18 +45,19 @@ const createTagToggle = (tag) => {
 const renderEmojis = () => {
   const term = searchInput.value.trim().toLowerCase();
   const showNsfw = nsfwToggle.checked;
-  const hasActiveFilters = term.length > 0 || showNsfw || activeTags.size > 0;
+  const hasActiveFilters = term.length > 0 || activeTags.size > 0;
 
   container.innerHTML = "";
 
-  const filteredEmojis = allEmojis.filter((emoji) => {
-    if (!showNsfw && emoji.nsfw) return false;
+  const visibleEmojis = allEmojis.filter((emoji) => showNsfw || !emoji.nsfw);
+
+  const filteredEmojis = visibleEmojis.filter((emoji) => {
     if (activeTags.size > 0 && ![...activeTags].every((t) => (emoji.tags ?? []).includes(t))) return false;
     const searchable = [emoji.name, ...(emoji.tags ?? [])].join(" ").toLowerCase();
     return searchable.includes(term);
   });
 
-  const emojiCountText = hasActiveFilters ? `${filteredEmojis.length} / ${allEmojis.length}` : `${allEmojis.length}`;
+  const emojiCountText = hasActiveFilters ? `${filteredEmojis.length} / ${visibleEmojis.length}` : `${visibleEmojis.length}`;
   emojiCount.textContent = `Showing ${emojiCountText} emojis`;
 
   if (filteredEmojis.length === 0) {
