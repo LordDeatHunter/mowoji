@@ -3,15 +3,66 @@ body {
   padding: 1rem;
 }
 
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+}
+
 #search {
-  margin-bottom: 1rem;
   padding: 0.5rem;
   width: 100%;
-  max-width: 460px;
+  max-width: 400px;
   box-sizing: border-box;
   font-size: 1rem;
   border: 1px solid #ccc;
   border-radius: 8px;
+}
+
+.nsfw-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.tag-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 1rem;
+}
+
+.tag-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 999px;
+  background: #f5f5f5;
+  font-size: 0.8rem;
+  cursor: pointer;
+  user-select: none;
+  transition: background 150ms, border-color 150ms;
+}
+
+.tag-switch:hover {
+  background: #e0e0e0;
+}
+
+.tag-switch input[type="checkbox"] {
+  display: none;
+}
+
+.tag-switch:has(input:checked) {
+  background: #333;
+  color: #fff;
+  border-color: #333;
 }
 
 .emoji-grid {

@@ -1,37 +1,79 @@
 const container = document.getElementById("emojiGrid");
 const searchInput = document.getElementById("search");
+const nsfwToggle = document.getElementById("nsfwToggle");
+const tagFiltersContainer = document.getElementById("tagFilters");
+
+let allEmojis = [];
+let activeTags = new Set();
 
 fetch("/api/emojis")
   .then((response) => response.json())
   .then((emojis) => {
-    Object.entries(emojis).forEach(([name, url]) => {
-      const wrapper = document.createElement("div");
-      wrapper.className = "emoji";
-      wrapper.dataset.name = name.toLowerCase();
-
-      const img = document.createElement("img");
-      img.src = url;
-      img.alt = name;
-
-      const label = document.createElement("div");
-      label.textContent = name;
-
-      wrapper.append(img, label);
-      const filename = url.split("/").at(-1);
-      wrapper.addEventListener("click", () => {
-        downloadImage(url, filename);
-      });
-      container.append(wrapper);
-    });
+    allEmojis = Object.entries(emojis).map(([name, data]) => ({ name, ...data }));
+    buildTagFilters();
+    renderEmojis();
   })
   .catch((error) => console.error("Error loading emojis:", error));
 
-searchInput.addEventListener("input", (e) => {
-  const term = e.target.value.trim().toLowerCase();
-  container.querySelectorAll(".emoji").forEach((el) => {
-    el.style.display = el.dataset.name.includes(term) ? "flex" : "none";
+const buildTagFilters = () => {
+  const allTags = [...new Set(allEmojis.flatMap((e) => e.tags ?? []))].sort();
+  tagFiltersContainer.innerHTML = "";
+
+  allTags.forEach((tag) => tagFiltersContainer.append(createTagToggle(tag)));
+};
+
+const createTagToggle = (tag) => {
+  const label = document.createElement("label");
+  label.className = "tag-switch";
+
+  const checkbox = document.createElement("input");
+  checkbox.type = "checkbox";
+  checkbox.addEventListener("change", () => {
+    if (checkbox.checked) activeTags.add(tag);
+    else activeTags.delete(tag);
+    renderEmojis();
   });
-});
+
+  const span = document.createElement("span");
+  span.textContent = tag;
+
+  label.append(checkbox, span);
+  return label;
+};
+
+const renderEmojis = () => {
+  const term = searchInput.value.trim().toLowerCase();
+  const showNsfw = nsfwToggle.checked;
+
+  container.innerHTML = "";
+
+  allEmojis
+    .filter((emoji) => {
+      if (!showNsfw && emoji.nsfw) return false;
+      if (activeTags.size > 0 && ![...activeTags].every((t) => (emoji.tags ?? []).includes(t))) return false;
+      const searchable = [emoji.name, ...(emoji.tags ?? [])].join(" ").toLowerCase();
+      return searchable.includes(term);
+    })
+    .forEach((emoji) => {
+      const wrapper = document.createElement("div");
+      wrapper.className = "emoji";
+
+      const img = document.createElement("img");
+      img.src = emoji.url;
+      img.alt = emoji.name;
+
+      const label = document.createElement("div");
+      label.textContent = emoji.name;
+
+      wrapper.append(img, label);
+      const filename = emoji.url.split("/").at(-1);
+      wrapper.addEventListener("click", () => downloadImage(emoji.url, filename));
+      container.append(wrapper);
+    });
+}
+
+searchInput.addEventListener("input", renderEmojis);
+nsfwToggle.addEventListener("change", renderEmojis);
 
 const downloadImage = (url, filename) => {
   fetch(url)

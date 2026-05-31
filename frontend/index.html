@@ -8,7 +8,14 @@
   </head>
   <body>
     <h1>Emoji Viewer</h1>
-    <input id="search" placeholder="Search emojis..." />
+    <div class="controls">
+      <input id="search" placeholder="Search emojis..." />
+      <label class="nsfw-toggle">
+        <input type="checkbox" id="nsfwToggle" />
+        <span>Show NSFW</span>
+      </label>
+    </div>
+    <div id="tagFilters" class="tag-filters"></div>
 
     <div id="emojiGrid" class="emoji-grid"></div>
   </body>
