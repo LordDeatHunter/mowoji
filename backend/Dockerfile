@@ -15,7 +15,6 @@ FROM alpine:latest
 WORKDIR /app
 
 COPY --from=builder /app/server .
-COPY emojis/ ./emojis/
 
 EXPOSE 6969
 
