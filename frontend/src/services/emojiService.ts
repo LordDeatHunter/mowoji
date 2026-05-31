@@ -2,7 +2,7 @@ import type { Emoji, EmojisResponse } from "../types";
 
 export const fetchEmojis = async (): Promise<Emoji[]> => {
   try {
-    const response = await fetch("http://localhost:6969/emojis");
+    const response = await fetch("/api/emojis");
     const data: EmojisResponse = await response.json();
     return Object.entries(data).map(([name, emojiData]) => ({
       name,
