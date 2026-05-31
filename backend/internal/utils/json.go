@@ -7,7 +7,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-const ImageUrl = "https://emojis.deathunter.com/"
+const ImageUrl = "https://emojis.deathunter.com/emoji/"
 
 type Emoji struct {
 	URL  string   `yaml:"url" json:"url"`
