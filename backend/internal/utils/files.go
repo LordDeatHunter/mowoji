@@ -16,6 +16,9 @@ func GetFiles(path string) ([]string, error) {
 	var fileNames []string
 
 	for _, file := range files {
+		if file.Name() == "metadata.yaml" {
+			continue
+		}
 		fileNames = append(fileNames, file.Name())
 	}
 
