@@ -90,3 +90,11 @@ body {
   height: 64px;
   object-fit: contain;
 }
+
+.no-emojis-message {
+  width: 100%;
+  padding: 2rem;
+  text-align: center;
+  color: #666;
+  font-size: 1.1rem;
+}

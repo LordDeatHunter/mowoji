@@ -47,30 +47,38 @@ const renderEmojis = () => {
 
   container.innerHTML = "";
 
-  allEmojis
-    .filter((emoji) => {
-      if (!showNsfw && emoji.nsfw) return false;
-      if (activeTags.size > 0 && ![...activeTags].every((t) => (emoji.tags ?? []).includes(t))) return false;
-      const searchable = [emoji.name, ...(emoji.tags ?? [])].join(" ").toLowerCase();
-      return searchable.includes(term);
-    })
-    .forEach((emoji) => {
-      const wrapper = document.createElement("div");
-      wrapper.className = "emoji";
+  const filteredEmojis = allEmojis.filter((emoji) => {
+    if (!showNsfw && emoji.nsfw) return false;
+    if (activeTags.size > 0 && ![...activeTags].every((t) => (emoji.tags ?? []).includes(t))) return false;
+    const searchable = [emoji.name, ...(emoji.tags ?? [])].join(" ").toLowerCase();
+    return searchable.includes(term);
+  });
 
-      const img = document.createElement("img");
-      img.src = emoji.url;
-      img.alt = emoji.name;
+  if (filteredEmojis.length === 0) {
+    const emptyMessage = document.createElement("div");
+    emptyMessage.className = "no-emojis-message";
+    emptyMessage.textContent = "No emojis available";
+    container.append(emptyMessage);
+    return;
+  }
 
-      const label = document.createElement("div");
-      label.textContent = emoji.name;
+  filteredEmojis.forEach((emoji) => {
+    const wrapper = document.createElement("div");
+    wrapper.className = "emoji";
 
-      wrapper.append(img, label);
-      const filename = emoji.url.split("/").at(-1);
-      wrapper.addEventListener("click", () => downloadImage(emoji.url, filename));
-      container.append(wrapper);
-    });
-}
+    const img = document.createElement("img");
+    img.src = emoji.url;
+    img.alt = emoji.name;
+
+    const label = document.createElement("div");
+    label.textContent = emoji.name;
+
+    wrapper.append(img, label);
+    const filename = emoji.url.split("/").at(-1);
+    wrapper.addEventListener("click", () => downloadImage(emoji.url, filename));
+    container.append(wrapper);
+  });
+};
 
 searchInput.addEventListener("input", renderEmojis);
 nsfwToggle.addEventListener("change", renderEmojis);
